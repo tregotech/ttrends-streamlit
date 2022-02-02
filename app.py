@@ -37,22 +37,23 @@ class Trends:
             st.session_state.trends_df = pd.DataFrame()
 
         ################# intro #################
+        
         st.image("assets/favicon.png", width=50)
-        st.title("Ttrends")
-        st.text("some description text")
+        st.title("Trego Category Search Trends")
+  
         # components.html(line_HTML)
 
         ################# sidebar - seed kws #################
-        st.subheader("Expand Keywords")
+        st.subheader("1). Start with some keywords in your category...")
         st.text_input(
-            "Expand Keywords",
+            "",
             key="seed_kws",
             help="Enter seed terms separated by commas, semicolons, or new lines",
         )
 
         col1, col2 = st.columns(2)
-        related_button = col1.button("🔍 Related Terms")
-        add_kws_button = col2.button("➕ Add Keywords")
+        related_button = col1.button("🔍 Find related terms")
+        add_kws_button = col2.button("➕ Add keywords")
 
         if related_button:
             clean_seed_kws = Utils.clean_kws(st.session_state.seed_kws)
@@ -66,7 +67,7 @@ class Trends:
             st.session_state.kws.update(set(clean_seed_kws))
 
         ################# sidebar - related kws #################
-        st.subheader("Related terms")
+        st.subheader("2. Find related keywords (optional)")
 
         selected = sorted(list(st.session_state.api_related_kws))[:MAX_DISPLAY]
         selection_text = "{} related keywords found, showing first {}".format(
@@ -90,7 +91,7 @@ class Trends:
                 # st.session_state.api_related_kws = set()
 
         ################# display #################
-        st.subheader("My category:")
+        st.subheader("3. Visualise category trends")
 
         st.code(sorted(st.session_state.kws))
 
