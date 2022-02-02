@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 streamlit = "*"
 streamlit-metrics = "*"
+streamlit-aggrid = "*"
+plotly-express = "*"
 
 [dev-packages]
 
