@@ -19,7 +19,8 @@ class Utils:
     def API_related_kws(self, kw_list):
         """request to API gateway"""
         # API details
-        url = "https://cors-anywhere.herokuapp.com/https://z2azhrecpd.execute-api.us-east-1.amazonaws.com/Prod/related/"
+        #url = "https://cors-anywhere.herokuapp.com/https://z2azhrecpd.execute-api.us-east-1.amazonaws.com/Prod/related/"
+        url = "https://z2azhrecpd.execute-api.us-east-1.amazonaws.com/Prod/related/"
         headers = {
             "Content-Type": "text/plain",
             "Origin": "/",
@@ -37,7 +38,8 @@ class Utils:
     def API_trends(self, kw_list):
         """request to API gateway"""
         # API details
-        url = "https://cors-anywhere.herokuapp.com/https://z2azhrecpd.execute-api.us-east-1.amazonaws.com/Prod/trends/"
+        # url = "https://cors-anywhere.herokuapp.com/https://z2azhrecpd.execute-api.us-east-1.amazonaws.com/Prod/trends/"
+        url = "https://z2azhrecpd.execute-api.us-east-1.amazonaws.com/Prod/trends/"
         headers = {
             "Content-Type": "text/plain",
             "Origin": "/",
