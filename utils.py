@@ -83,10 +83,10 @@ class Utils:
         totals = df.resample("YS").sum()
         ly_total = totals[totals.index.year == full_years[-1]]
         ly_total.index = [
-            "LY Relative Size (FY{})".format(str(ly_total.index.year[0])[-2:])
+            "LY Share of Search (FY{})".format(str(ly_total.index.year[0])[-2:])
         ]
 
-        ly_total = (ly_total / ly_total.max().max() * 100).round(1)
+        ly_total = (ly_total / ly_total.sum().sum() * 100).round(1)
 
         ly_total = ly_total.T.reset_index().rename(mapper={"index": "kw"}, axis=1)
 
