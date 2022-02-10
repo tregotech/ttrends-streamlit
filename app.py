@@ -8,7 +8,7 @@ CORS_URL = "https://cors-anywhere.herokuapp.com/"
 
 menu_items = {"About": "www.trego.tech"}
 line_HTML = (
-    """<hr style="height:1px;border:none;color:#333;background-color:#333;" /> """
+    """<hr style="height:1px;border:none;color:#333;background-color:#333;"/> """
 )
 
 st.set_page_config(
@@ -39,21 +39,23 @@ class Trends:
         ################# intro #################
         
         st.image("assets/favicon.png", width=50)
-        st.title("Trego Category Search Trends")
-  
-        # components.html(line_HTML)
+        st.title("Ttrends Share of Search")
+        link1 = 'https://www.kantar.com/uki/inspiration/advertising-media/share-of-search-your-moment-has-arrived'
+        link2 = 'https://www.marketingweek.com/mark-ritson-share-of-search-share-of-voice/'
+        st.markdown("Ttrends is a simple web-app for tracking **Share of search (SoS)** - a leading indicator of brand health in a digital world.[[1]]({}) [[2]]({})".format(link1,link2))
+        github_link = 'https://github.com/tregotech/ttrends-streamlit'
+        st.markdown("TTrends builds on the Google Trends API, but unlike Google, does not limit you to 5 search queires at a time. See [GitHub]({}) for methodology.".format(github_link))
+        #components.html(line_HTML)
 
         ################# sidebar - seed kws #################
-        st.subheader("1). Start with some keywords in your category...")
+        st.subheader("1. Start with some keywords in your category")
         st.text_input(
-            "",
-            key="seed_kws",
-            help="Enter seed terms separated by commas, semicolons, or new lines",
-        )
+            "Enter seed terms separated by commas or semicolons",
+            key="seed_kws"        )
 
         col1, col2 = st.columns(2)
-        related_button = col1.button("🔍 Find related terms")
-        add_kws_button = col2.button("➕ Add keywords")
+        related_button = col1.button("🔍 Get related queries")
+        add_kws_button = col2.button("➕ Add to my keywords")
 
         if related_button:
             clean_seed_kws = Utils.clean_kws(st.session_state.seed_kws)
@@ -67,7 +69,7 @@ class Trends:
             st.session_state.kws.update(set(clean_seed_kws))
 
         ################# sidebar - related kws #################
-        st.subheader("2. Find related keywords (optional)")
+        st.subheader("2. Select related queries (optional)")
 
         selected = sorted(list(st.session_state.api_related_kws))[:MAX_DISPLAY]
         selection_text = "{} related keywords found, showing first {}".format(
@@ -84,7 +86,7 @@ class Trends:
                 default=selected,
             )
 
-        if st.button("➕ Add Selected", help="Click 'Get related kws' & select below"):
+        if st.button("➕ Add Selected Queries", help="Click 'Get related kws' & select below"):
             if len(st.session_state.selected_related_kws) > 0:
                 st.session_state.kws.update(set(st.session_state.selected_related_kws))
                 # st.session_state.selected_related_kws = set()
@@ -93,7 +95,7 @@ class Trends:
         ################# display #################
         st.subheader("3. Visualise category trends")
 
-        st.code(sorted(st.session_state.kws))
+        st.code('My keywords: ' + str(sorted(st.session_state.kws)))
 
         col3, col4 = st.columns(2)
         get_trends_button = col3.button("📈 Get trends")
@@ -116,7 +118,7 @@ class Trends:
                 [
                     i
                     for i in category_summary.columns
-                    if "kw" not in i.lower() and "size" not in i.lower()
+                    if "kw" not in i.lower() and "share" not in i.lower()
                 ]
             ]
 
