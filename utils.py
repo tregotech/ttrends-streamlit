@@ -1,5 +1,6 @@
+import plotly.graph_objects as go
+import plotly.subplots as sp
 from packages import *
-
 
 class Utils:
     def __init__(self):
@@ -19,7 +20,7 @@ class Utils:
     def API_related_kws(self, kw_list):
         """request to API gateway"""
         # API details
-        #url = "https://cors-anywhere.herokuapp.com/https://z2azhrecpd.execute-api.us-east-1.amazonaws.com/Prod/related/"
+        # url = "https://cors-anywhere.herokuapp.com/https://z2azhrecpd.execute-api.us-east-1.amazonaws.com/Prod/related/"
         url = "https://z2azhrecpd.execute-api.us-east-1.amazonaws.com/Prod/related/"
         headers = {
             "Content-Type": "text/plain",
@@ -38,7 +39,7 @@ class Utils:
     def API_trends(self, kw_list):
         """request to API gateway"""
         # API details
-        # url = "https://cors-anywhere.herokuapp.com/https://z2azhrecpd.execute-api.us-east-1.amazonaws.com/Prod/trends/"
+        #url = "https://cors-anywhere.herokuapp.com/https://z2azhrecpd.execute-api.us-east-1.amazonaws.com/Prod/trends/"
         url = "https://z2azhrecpd.execute-api.us-east-1.amazonaws.com/Prod/trends/"
         headers = {
             "Content-Type": "text/plain",
@@ -109,3 +110,35 @@ class Utils:
             growth_rates, how="outer", right_on="kw", left_on="kw"
         ).merge(cagrs, how="outer", right_on="kw", left_on="kw")
         return summary_df
+
+    def plotly_fig(self, df):
+        """plotly figure for trends df"""
+
+        # Create figure with secondary y-axis
+        fig = sp.make_subplots(specs=[[{"secondary_y": True}]])
+
+        # Add traces
+        fig.add_trace(
+            go.Scatter(
+                x=df.index.values, y=df.sum(axis=1).values, name="Category Total", line_width=3,line_color='Black'
+            ),
+            secondary_y=True,
+        )
+
+        for i in df.columns:
+            fig.add_trace(
+                go.Scatter(x=df.index.values, y=df[i].values, name=i, line_width=1),
+                secondary_y=False,
+            )
+
+        # Set x-axis title
+        fig.update_xaxes(title_text="Date")
+
+        # Set y-axes titles
+        fig.update_yaxes(title_text="Keyword Axis", secondary_y=False)
+        fig.update_yaxes(title_text="Category Axis", secondary_y=True)
+
+        return fig
+
+    def test_plotly(self):
+        return sp
