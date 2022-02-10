@@ -37,21 +37,32 @@ class Trends:
             st.session_state.trends_df = pd.DataFrame()
 
         ################# intro #################
-        
+
         st.image("assets/favicon.png", width=50)
         st.title("Ttrends Share of Search")
-        link1 = 'https://www.kantar.com/uki/inspiration/advertising-media/share-of-search-your-moment-has-arrived'
-        link2 = 'https://www.marketingweek.com/mark-ritson-share-of-search-share-of-voice/'
-        st.markdown("Ttrends is a simple web-app for tracking **Share of search (SoS)** - a leading indicator of brand health in a digital world.[[1]]({}) [[2]]({})".format(link1,link2))
-        github_link = 'https://github.com/tregotech/ttrends-streamlit'
-        st.markdown("TTrends builds on the Google Trends API, but unlike Google, does not limit you to 5 search queires at a time. See [GitHub]({}) for methodology.".format(github_link))
-        #components.html(line_HTML)
+
+        link1 = "https://www.kantar.com/uki/inspiration/advertising-media/share-of-search-your-moment-has-arrived"
+        link2 = (
+            "https://www.marketingweek.com/mark-ritson-share-of-search-share-of-voice/"
+        )
+        st.markdown(
+            "Ttrends is a simple web-app for tracking **Share of search (SoS)** - a leading indicator of brand health in a digital world.[[1]]({}) [[2]]({})".format(
+                link1, link2
+            )
+        )
+        github_link = "https://github.com/tregotech/ttrends-streamlit"
+        st.markdown(
+            "TTrends builds on the Google Trends API, but unlike Google, does not limit you to 5 search queires at a time. See [GitHub]({}) for methodology.".format(
+                github_link
+            )
+        )
+        # components.html(line_HTML)
 
         ################# sidebar - seed kws #################
         st.subheader("1. Start with some keywords in your category")
         st.text_input(
-            "Enter seed terms separated by commas or semicolons",
-            key="seed_kws"        )
+            "Enter seed terms separated by commas or semicolons", key="seed_kws"
+        )
 
         col1, col2 = st.columns(2)
         related_button = col1.button("🔍 Get related queries")
@@ -86,7 +97,9 @@ class Trends:
                 default=selected,
             )
 
-        if st.button("➕ Add Selected Queries", help="Click 'Get related kws' & select below"):
+        if st.button(
+            "➕ Add Selected Queries", help="Click 'Get related kws' & select below"
+        ):
             if len(st.session_state.selected_related_kws) > 0:
                 st.session_state.kws.update(set(st.session_state.selected_related_kws))
                 # st.session_state.selected_related_kws = set()
@@ -95,7 +108,7 @@ class Trends:
         ################# display #################
         st.subheader("3. Visualise category trends")
 
-        st.code('My keywords: ' + str(sorted(st.session_state.kws)))
+        st.code("My keywords: " + str(sorted(st.session_state.kws)))
 
         col3, col4 = st.columns(2)
         get_trends_button = col3.button("📈 Get trends")
@@ -108,11 +121,14 @@ class Trends:
             df[self.DATECOLUMN] = pd.to_datetime(df[self.DATECOLUMN])
             st.session_state.trends_df = df.copy()
 
+            summary = Utils.summary(
+                st.session_state.trends_df.set_index(self.DATECOLUMN)
+            )
 
-            summary = Utils.summary(st.session_state.trends_df.set_index(self.DATECOLUMN))
-            
             category_summary = Utils.summary(
-                st.session_state.trends_df.set_index(self.DATECOLUMN).sum(axis=1).to_frame()
+                st.session_state.trends_df.set_index(self.DATECOLUMN)
+                .sum(axis=1)
+                .to_frame()
             )
             category_summary = category_summary[
                 [
@@ -123,7 +139,7 @@ class Trends:
             ]
 
             st.subheader("Category Summmary")
-            st.text(('all keywords'))
+            st.text(("all keywords"))
 
             col1, col2 = st.columns(2)
             kpi1 = category_summary.columns[0]
@@ -131,7 +147,6 @@ class Trends:
             col1.metric(kpi1, category_summary[kpi1])
             col2.metric(kpi2, category_summary[kpi2])
 
-            st.subheader("Keyword Detail")
             gb = GridOptionsBuilder.from_dataframe(summary)
             # gb.configure_selection(selection_mode="multiple", use_checkbox=True)
             gridOptions = gb.build()
@@ -140,19 +155,13 @@ class Trends:
                 summary,
                 gridOptions=gridOptions,
                 enable_enterprise_modules=True,
-            #     allow_unsafe_jscode=True,
-            #     update_mode=GridUpdateMode.SELECTION_CHANGED,
+                #     allow_unsafe_jscode=True,
+                #     update_mode=GridUpdateMode.SELECTION_CHANGED,
             )
             data
 
-            # selected_rows = pd.DataFrame(data["selected_rows"])
-
-            ## plot chart if rows are selected
-            # if len(selected_rows) != 0:
-            #     selected_kws = selected_rows.kw.tolist()
-
-            fig = px.line(st.session_state.trends_df.reset_index(), x=self.DATECOLUMN, y=st.session_state.trends_df.columns)
-            fig.update_layout(paper_bgcolor="rgb(211,220,220)")
+            # chart
+            fig = Utils.plotly_fig(st.session_state.trends_df.set_index(self.DATECOLUMN))
             st.plotly_chart(fig)
 
             st.download_button(
