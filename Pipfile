@@ -7,7 +7,7 @@ name = "pypi"
 streamlit = "*"
 streamlit-aggrid = "*"
 plotly-express = "*"
-plotly=="*"
+plotly="5.5.0"
 
 [dev-packages]
 
