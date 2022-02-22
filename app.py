@@ -102,8 +102,7 @@ class Trends:
         ):
             if len(st.session_state.selected_related_kws) > 0:
                 st.session_state.kws.update(set(st.session_state.selected_related_kws))
-                # st.session_state.selected_related_kws = set()
-                # st.session_state.api_related_kws = set()
+
 
         ################# display #################
         st.subheader("3. Visualise category trends")
@@ -155,8 +154,6 @@ class Trends:
                 summary,
                 gridOptions=gridOptions,
                 enable_enterprise_modules=True,
-                #     allow_unsafe_jscode=True,
-                #     update_mode=GridUpdateMode.SELECTION_CHANGED,
             )
             data
 
