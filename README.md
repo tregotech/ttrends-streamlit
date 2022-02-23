@@ -5,14 +5,14 @@ Here is a [live demo](https://share.streamlit.io/tregotech/ttrends-streamlit/mai
 
 ## Install
 
-To install dependencies using pipenv run
+To install dependencies in piplock using pipenv run
 ```
 pipenv install
 ```
 
 ## Usage
 
-This project uses Streamlit (https://streamlit.io/).
+This project uses [Streamlit] (https://streamlit.io/).
 
 To run locally use:
 
