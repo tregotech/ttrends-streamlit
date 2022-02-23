@@ -12,7 +12,7 @@ pipenv install
 
 ## Usage
 
-This project uses [Streamlit] (https://streamlit.io/).
+This project uses [Streamlit](https://streamlit.io/).
 
 To run locally use:
 
