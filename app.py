@@ -74,36 +74,19 @@ class Trends:
             clean_seed_kws = Utils.clean_kws(st.session_state.seed_kws)
             result = Utils.API_related_kws(clean_seed_kws)
             data = json.loads(result.json()["message"])
-            st.session_state.api_related_kws.update(set(data))
+            st.session_state.api_related_kws = set(data)
 
         if add_kws_button:
             clean_seed_kws = Utils.clean_kws(st.session_state.seed_kws)
             st.session_state.kws.update(set(clean_seed_kws))
 
-        ################# sidebar - related kws #################
-        st.subheader("2. Select related search terms (optional)")
+        st.code("Related terms: " + str(sorted(st.session_state.api_related_kws)))
 
-        selected = sorted(list(st.session_state.api_related_kws))[:MAX_DISPLAY]
-        selection_text = "{} related search terms found, showing first {}".format(
-            str(len(st.session_state.api_related_kws)), len(selected)
-        )
-
-        st.code(selection_text)
-
-        if len(st.session_state.api_related_kws) > 0:
-            st.multiselect(
-                "",
-                sorted(list(st.session_state.api_related_kws)),
-                key="selected_related_kws",
-                default=selected,
-            )
-
-        if st.button("➕ Add Selected Search Terms"):
-            if len(st.session_state.selected_related_kws) > 0:
-                st.session_state.kws.update(set(st.session_state.selected_related_kws))
+        if st.button("➕ Add all related terms"):
+            st.session_state.kws.update(set(st.session_state.api_related_kws))
 
         ################# display #################
-        st.subheader("3. Visualise & download category trends")
+        st.subheader("2. Visualise & download category trends")
 
         st.code("My search terms: " + str(sorted(st.session_state.kws)))
 
