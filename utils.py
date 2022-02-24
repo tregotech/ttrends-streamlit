@@ -60,7 +60,7 @@ class Utils:
             )
 
     def clean_kws(self, kw_text):
-        return [i.strip() for i in re.split(";|,|\n", kw_text) if len(i) > 0]
+        return [i.strip().replace("'","") for i in re.split(";|,|\n", kw_text) if len(i) > 0]
 
     def summary(self, df):
         """summary stats for trends df"""
