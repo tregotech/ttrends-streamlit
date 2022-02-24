@@ -1,6 +1,7 @@
 # ttrends-streamlit
 
-ttrends-streamlit is a streamlit front end for the [Ttrends API](https://github.com/tregotech/ttrends-api).
+Streamlit front-end for the [Ttrends API](https://github.com/tregotech/ttrends-api) / [Ttrends library](https://github.com/tregotech/ttrends) used to extract Google search trends for >5 keywords.
+
 Here is a [live demo](https://share.streamlit.io/tregotech/ttrends-streamlit/main/app.py).
 
 ## Install
