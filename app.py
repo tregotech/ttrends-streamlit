@@ -3,7 +3,7 @@ from utils import Utils
 
 Utils = Utils()
 
-MAX_DISPLAY = 10
+MAX_DISPLAY = 25
 CORS_URL = "https://cors-anywhere.herokuapp.com/"
 
 menu_items = {"About": "www.trego.tech"}
@@ -45,45 +45,46 @@ class Trends:
         link2 = (
             "https://www.marketingweek.com/mark-ritson-share-of-search-share-of-voice/"
         )
+        github_link = "https://github.com/tregotech/ttrends"
+
+
+
         st.markdown(
-            "Ttrends is a simple web-app for tracking **Share of search (SoS)** - a leading indicator of brand health in a digital world.[[1]]({}) [[2]]({})".format(
-                link1, link2
+            "Track **share of search** using trends from **>5 search terms***. \
+            \
+            Share of search is a leading indicator of brand strength in a digital world [[1]]({}) [[2]]({}).\
+             See [GitHub]({}) for methodology.".format(
+                link1, link2, github_link
             )
         )
-        github_link = "https://github.com/tregotech/ttrends-streamlit"
-        st.markdown(
-            "TTrends builds on the Google Trends API, but unlike Google, does not limit you to 5 search queires at a time. See [GitHub]({}) for methodology.".format(
-                github_link
-            )
-        )
-        # components.html(line_HTML)
+
+        st.markdown("*_5 search terms is the limit set in the Google Trends UI_")
 
         ################# sidebar - seed kws #################
-        st.subheader("1. Start with some keywords in your category")
+        st.subheader("1. Start with some search terms in your category")
         st.text_input(
-            "Enter seed terms separated by commas or semicolons", key="seed_kws"
+            "Enter search terms separated by commas or semicolons", key="seed_kws"
         )
 
         col1, col2 = st.columns(2)
-        related_button = col1.button("🔍 Get related queries")
-        add_kws_button = col2.button("➕ Add to my keywords")
+        related_button = col1.button("🔍 Get related search terms")
+        add_kws_button = col2.button("➕ Add to my search terms")
 
         if related_button:
             clean_seed_kws = Utils.clean_kws(st.session_state.seed_kws)
             result = Utils.API_related_kws(clean_seed_kws)
             data = json.loads(result.json()["message"])
             st.session_state.api_related_kws.update(set(data))
-            # st.session_state.api_related_kws.update(set(random.choices(WORDS, k=50)))
 
         if add_kws_button:
             clean_seed_kws = Utils.clean_kws(st.session_state.seed_kws)
             st.session_state.kws.update(set(clean_seed_kws))
 
         ################# sidebar - related kws #################
-        st.subheader("2. Select related queries (optional)")
+        st.subheader("2. Select related search terms (optional)")
 
         selected = sorted(list(st.session_state.api_related_kws))[:MAX_DISPLAY]
-        selection_text = "{} related keywords found, showing first {}".format(
+        selection_text = "{} related search terms found, showing first {}".format(
             str(len(st.session_state.api_related_kws)), len(selected)
         )
 
@@ -97,17 +98,14 @@ class Trends:
                 default=selected,
             )
 
-        if st.button(
-            "➕ Add Selected Queries", help="Click 'Get related kws' & select below"
-        ):
+        if st.button("➕ Add Selected Search Terms"):
             if len(st.session_state.selected_related_kws) > 0:
                 st.session_state.kws.update(set(st.session_state.selected_related_kws))
 
-
         ################# display #################
-        st.subheader("3. Visualise category trends")
+        st.subheader("3. Visualise & download category trends")
 
-        st.code("My keywords: " + str(sorted(st.session_state.kws)))
+        st.code("My search terms: " + str(sorted(st.session_state.kws)))
 
         col3, col4 = st.columns(2)
         get_trends_button = col3.button("📈 Get trends")
@@ -138,7 +136,7 @@ class Trends:
             ]
 
             st.subheader("Category Summmary")
-            st.text(("all keywords"))
+            st.text(("all search terms"))
 
             col1, col2 = st.columns(2)
             kpi1 = category_summary.columns[0]
@@ -158,7 +156,9 @@ class Trends:
             data
 
             # chart
-            fig = Utils.plotly_fig(st.session_state.trends_df.set_index(self.DATECOLUMN))
+            fig = Utils.plotly_fig(
+                st.session_state.trends_df.set_index(self.DATECOLUMN)
+            )
             st.plotly_chart(fig)
 
             st.download_button(
