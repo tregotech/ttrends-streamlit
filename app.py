@@ -88,7 +88,7 @@ class Trends:
         ################# display #################
         st.subheader("2. Visualise & download category trends")
 
-        st.code("My search terms: " + str(sorted(st.session_state.kws)))
+        st.code(str(len(st.session_state.kws)) + " search terms: " + str(sorted(st.session_state.kws)))
 
         col3, col4 = st.columns(2)
         get_trends_button = col3.button("📈 Get trends")
