@@ -48,109 +48,112 @@ class Trends:
         github_link = "https://github.com/tregotech/ttrends"
 
 
+        with st.expander("What is share of search?"):
+            st.markdown("**Share of search** is the number of organic searches a brand receives divided \
+                by the total searches for all brands its category.\
+                Share of search is a good proxy for brand strength, explaining >80% of market share [[1]]({}) [[2]]({}).".format(
+                link1, link2
+            )
+        )
 
-        #st.markdown(
-        #    "Track **share of search** using Google search trends from **>5 search terms***. \
-        #    \
-        #    Share of search is a leading indicator of brand strength in a digital world [[1]]({}) [[2]]({}).".format(
-        #        link1, link2
-        #    )
-        #)
 
+        
+
+
+        
         ################# sidebar - seed kws #################
-        st.header('Category Keywords')
-        st.text_input(label="Start with some 'seed' search terms in your category, separated by commas",key="seed_kws")
+        with st.expander("Add keywords"):
 
-        col1, col2 = st.columns(2)
-        related_button = col1.button("🔍 Get related")
-        add_kws_button = col2.button("➕ Add search terms")
+            st.text_input(label="Add 1+ 'seed' keywords separated by commas",key="seed_kws")
 
-        if related_button:
-            with st.spinner('Wait for it...'):
+            col1, col2 = st.columns(2)
+            related_button = col1.button("🔍 Get related")
+            add_kws_button = col2.button("➕ Add seed keywords")
+
+            if related_button:
+                with st.spinner('Wait for it...'):
+                    clean_seed_kws = Utils.clean_kws(st.session_state.seed_kws)
+                    result = Utils.API_related_kws(clean_seed_kws)
+                    data = json.loads(result.json()["message"])
+                    st.session_state.api_related_kws = set(data)
+
+            if add_kws_button:
                 clean_seed_kws = Utils.clean_kws(st.session_state.seed_kws)
-                result = Utils.API_related_kws(clean_seed_kws)
-                data = json.loads(result.json()["message"])
-                st.session_state.api_related_kws = set(data)
-            st.success('Done!')
+                st.session_state.kws.update(set(clean_seed_kws))
 
-        if add_kws_button:
-            clean_seed_kws = Utils.clean_kws(st.session_state.seed_kws)
-            st.session_state.kws.update(set(clean_seed_kws))
+            st.code(str(len(st.session_state.api_related_kws)) + " related terms: " + str(sorted(st.session_state.api_related_kws)))
 
-        st.code(str(len(st.session_state.api_related_kws)) + " related terms: " + str(sorted(st.session_state.api_related_kws)))
+            if st.button("➕ Add related keywords"):
+                st.session_state.kws.update(set(st.session_state.api_related_kws))
 
-        if st.button("➕ Add all related terms"):
-            st.session_state.kws.update(set(st.session_state.api_related_kws))
-
-        ################# display #################
-        st.header('Share of Search')
-
+        ################# get trends section #################
         st.code(str(len(st.session_state.kws)) + " search terms: " + str(sorted(st.session_state.kws)))
-
         col3, col4 = st.columns(2)
         get_trends_button = col3.button("📈 Get trends")
         restart_button = col4.button("🗑️ Restart")
 
         if get_trends_button:
-            with st.spinner('Wait for it...'):
-                result = Utils.API_trends(list(st.session_state.kws))
-                df = pd.DataFrame(result.json()["message"]["data"])
-                self.DATECOLUMN = df.columns.tolist()[0]
-                df[self.DATECOLUMN] = pd.to_datetime(df[self.DATECOLUMN])
-                st.session_state.trends_df = df.copy()
+            if len(list(st.session_state.kws))>0:
+                with st.spinner('Wait for it...'):
+                    result = Utils.API_trends(list(st.session_state.kws))
+                    df = pd.DataFrame(result.json()["message"]["data"])
+                    self.DATECOLUMN = df.columns.tolist()[0]
+                    df[self.DATECOLUMN] = pd.to_datetime(df[self.DATECOLUMN])
+                    st.session_state.trends_df = df.copy()
 
-                summary = Utils.summary(
-                    st.session_state.trends_df.set_index(self.DATECOLUMN)
-                )
+                    summary = Utils.summary(
+                        st.session_state.trends_df.set_index(self.DATECOLUMN)
+                    )
 
-                category_summary = Utils.summary(
-                    st.session_state.trends_df.set_index(self.DATECOLUMN)
-                    .sum(axis=1)
-                    .to_frame()
-                )
-                category_summary = category_summary[
-                    [
-                        i
-                        for i in category_summary.columns
-                        if "kw" not in i.lower() and "share" not in i.lower()
+                    category_summary = Utils.summary(
+                        st.session_state.trends_df.set_index(self.DATECOLUMN)
+                        .sum(axis=1)
+                        .to_frame()
+                    )
+                    category_summary = category_summary[
+                        [
+                            i
+                            for i in category_summary.columns
+                            if "kw" not in i.lower() and "share" not in i.lower()
+                        ]
                     ]
-                ]
 
-                st.success('Done!')
-                st.subheader("Category Summmary")
-                st.text(("all search terms"))
+                    st.subheader("Category Summmary")
 
-                col1, col2 = st.columns(2)
-                kpi1 = category_summary.columns[0]
-                kpi2 = category_summary.columns[1]
-                col1.metric(kpi1, category_summary[kpi1])
-                col2.metric(kpi2, category_summary[kpi2])
+                    col1, col2 = st.columns(2)
+                    kpi1 = category_summary.columns[0]
+                    kpi2 = category_summary.columns[1]
+                    col1.metric(kpi1, category_summary[kpi1])
+                    col2.metric(kpi2, category_summary[kpi2])
 
-                gb = GridOptionsBuilder.from_dataframe(summary)
-                # gb.configure_selection(selection_mode="multiple", use_checkbox=True)
-                gridOptions = gb.build()
+                    gb = GridOptionsBuilder.from_dataframe(summary)
+                    # gb.configure_selection(selection_mode="multiple", use_checkbox=True)
+                    gridOptions = gb.build()
 
-                data = AgGrid(
-                    summary,
-                    gridOptions=gridOptions,
-                    enable_enterprise_modules=True,
-                )
-                data
+                    data = AgGrid(
+                        summary,
+                        gridOptions=gridOptions,
+                        enable_enterprise_modules=True,
+                        height = 200
+                    )
+                    data
 
-                # chart
-                fig = Utils.plotly_fig(
-                    st.session_state.trends_df.set_index(self.DATECOLUMN)
-                )
-                st.plotly_chart(fig)
+                    # chart
+                    fig = Utils.plotly_fig(
+                        st.session_state.trends_df.set_index(self.DATECOLUMN)
+                    )
+                    st.plotly_chart(fig)
 
-                st.download_button(
-                    "💾 Download (.csv)",
-                    st.session_state.trends_df.to_csv().encode("utf-8"),
-                    file_name="trends_data.csv",
-                )       
+                    st.download_button(
+                        "💾 Download (.csv)",
+                        st.session_state.trends_df.to_csv().encode("utf-8"),
+                        file_name="trends_data.csv",
+                    )       
 
-        if restart_button:
-            st.session_state.kws = set()
+            if restart_button:
+                st.session_state.kws = set()
+            else:
+                st.error("Add some keywords!")
 
 
 if __name__ == "__main__":
