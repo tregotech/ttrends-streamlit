@@ -95,7 +95,14 @@ class Trends:
         restart_button = col4.button("🗑️ Restart")
 
         if get_trends_button:
-            if len(list(st.session_state.kws))>0:
+
+            if len(list(st.session_state.kws))==0:
+                st.error("Add some keywords!")
+
+            elif len(list(st.session_state.kws))>100:
+                st.error("You've selected a lot of keywords, review your list to make it <100")
+
+            if len(list(st.session_state.kws))>0 and len(list(st.session_state.kws))<=100:
                 with st.spinner('Wait for it...'):
                     result = Utils.API_trends(list(st.session_state.kws))
                     df = pd.DataFrame(result.json()["message"]["data"])
@@ -151,8 +158,6 @@ class Trends:
                         st.session_state.trends_df.to_csv().encode("utf-8"),
                         file_name="trends_data.csv",
                     )
-            elif len(list(st.session_state.kws))==0:
-                st.error("Add some keywords!")
 
             if restart_button:
                 st.session_state.kws = set()
