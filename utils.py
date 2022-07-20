@@ -127,7 +127,7 @@ class Utils:
 
         for i in df.columns:
             fig.add_trace(
-                go.Scatter(x=df.index.values, y=df[i].values, name=i, line_width=1),
+                go.Scatter(x=df.index.values, y=df[i].values, name=i, line_width=1,visible = "legendonly"),
                 secondary_y=False,
             )
 
