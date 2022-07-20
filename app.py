@@ -150,12 +150,13 @@ class Trends:
                         "💾 Download (.csv)",
                         st.session_state.trends_df.to_csv().encode("utf-8"),
                         file_name="trends_data.csv",
-                    )       
+                    )
+            elif len(list(st.session_state.kws))==0:
+                st.error("Add some keywords!")
 
             if restart_button:
                 st.session_state.kws = set()
-            else:
-                st.error("Add some keywords!")
+            
 
 
 if __name__ == "__main__":
