@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-streamlit = "*"
+streamlit = "1.11.0"
 streamlit-aggrid = "*"
 plotly-express = "*"
 plotly="5.5.0"
