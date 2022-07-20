@@ -43,8 +43,9 @@ class Trends:
 
         link1 = "https://www.kantar.com/uki/inspiration/advertising-media/share-of-search-your-moment-has-arrived"
         link2 = (
-            "https://www.marketingweek.com/mark-ritson-share-of-search-share-of-voice/"
+            "https://www.marketingweek.com/share-of-search-market-share/"
         )
+
         github_link = "https://github.com/tregotech/ttrends"
 
 
@@ -52,9 +53,10 @@ class Trends:
             st.markdown("**Share of search** is the number of organic searches a brand receives divided \
                 by the total searches for all brands its category.\
                 Share of search is a good proxy for brand strength, explaining >80% of market share [[1]]({}) [[2]]({}).".format(
-                link1, link2
+                link1, link2)
             )
-        )
+            st.markdown('This tool builds on the Google Trends API to allow extraction of >5 keywords at a time, i.e. **full category data**. \
+                See [GitHub]({}) for methodology.'.format(github_link))
 
 
         
@@ -81,13 +83,13 @@ class Trends:
                 clean_seed_kws = Utils.clean_kws(st.session_state.seed_kws)
                 st.session_state.kws.update(set(clean_seed_kws))
 
-            st.code(str(len(st.session_state.api_related_kws)) + " related terms: " + str(sorted(st.session_state.api_related_kws)))
+            st.code(str(len(st.session_state.api_related_kws)) + " related keywords: " + str(sorted(st.session_state.api_related_kws)))
 
             if st.button("➕ Add related keywords"):
                 st.session_state.kws.update(set(st.session_state.api_related_kws))
 
         ################# get trends section #################
-        st.code(str(len(st.session_state.kws)) + " search terms: " + str(sorted(st.session_state.kws)))
+        st.code(str(len(st.session_state.kws)) + " total keywords: " + str(sorted(st.session_state.kws)))
         col3, col4 = st.columns(2)
         get_trends_button = col3.button("📈 Get trends")
         restart_button = col4.button("🗑️ Restart")
