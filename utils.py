@@ -27,7 +27,7 @@ class Utils:
             "Origin": "/",
             "Access-Control-Allow-Origin": "*",
         }
-        body = str(kw_list)
+        body = str(kw_list).encode('utf-8')
         # Making http post request
 
         response = requests.post(url, headers=headers, data=body)
@@ -46,7 +46,7 @@ class Utils:
             "Origin": "/",
             "Access-Control-Allow-Origin": "*",
         }
-        body = str(kw_list)
+        body = str(kw_list).encode('utf-8')
         # Making http post request
 
         response = requests.post(url, headers=headers, data=body)
